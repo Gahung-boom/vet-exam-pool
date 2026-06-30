@@ -146,7 +146,7 @@ function normalizeCandidates(data){
 }
 let candidates=normalizeCandidates(JSON.parse(localStorage.getItem("vet-candidates"))||structuredClone(DEFAULTS));
 let margin=Number(localStorage.getItem("vet-margin")||8);
-let bets=JSON.parse(localStorage.getItem("vet-bets"))||[];
+let bets=[];
 let picks=[],betType="parlay",singleStakes={},playerCode=localStorage.getItem("vet-player-code")||"";
 const qs=s=>document.querySelector(s), qsa=s=>[...document.querySelectorAll(s)];
 const money=n=>"$"+Math.round(n).toLocaleString("zh-TW");
@@ -212,22 +212,20 @@ async function placeBet(){
   try{
     await sbRequest("/rest/v1/bets",{method:"POST",body:{bettor_name:name,player_code:playerCode,stake,bet_type:betType,selections,total_odd:totalOdd,payout}});
   }catch(error){console.error(error);return toast("連線失敗，下注尚未送出")}
-  bets.unshift(newBet);
-  localStorage.setItem("vet-bets",JSON.stringify(bets));picks=[];renderCandidates();renderSlip();renderRecords();updatePool();toast("下注已記錄，祝你好眼光！");
+  picks=[];renderCandidates();renderSlip();await loadPlayerBets();toast("下注已記錄，祝你好眼光！");
 }
 function renderRecords(){
   qs("#recordCount").textContent=bets.length;
   qs("#recordStake").textContent=money(bets.reduce((a,b)=>a+b.stake,0));
   qs("#recordMax").textContent=money(Math.max(0,...bets.map(b=>b.payout)));
-  qs("#recordList").innerHTML=bets.length?bets.map(b=>`<article class="record"><div><b>${escapeHtml(b.name)}</b><small>${b.date}・${b.type==="parlay"?"串關":"各別單關"}</small></div><div class="selections">${b.selections.map(s=>`${escapeHtml(s.name)} ${s.outcome==="pass"?"通過":"未通過"} @ ${s.odd}`).join(" ＋ ")}</div><div><small>下注 ${money(b.stake)}</small><b>可能派彩 ${money(b.payout)}</b></div><button class="delete-record" data-id="${b.id}" title="刪除">✕</button></article>`).join(""):`<div class="notice">還沒有紀錄。去本期盤口挑一注吧。</div>`;
-  qsa(".delete-record").forEach(x=>x.onclick=()=>{if(confirm("刪除這筆模擬下注？")){bets=bets.filter(b=>b.id!=x.dataset.id);localStorage.setItem("vet-bets",JSON.stringify(bets));renderRecords();updatePool()}});
+  qs("#recordList").innerHTML=bets.length?bets.map(b=>`<article class="record"><div><b>${escapeHtml(b.name)}</b><small>${b.date}・${b.type==="parlay"?"串關":"各別單關"}</small></div><div class="selections">${b.selections.map(s=>`${escapeHtml(s.name)} ${s.outcome==="pass"?"通過":"未通過"} @ ${s.odd}${s.stake?`（${money(s.stake)}）`:""}`).join(" ＋ ")}</div><div><small>下注 ${money(b.stake)}</small><b>可能派彩 ${money(b.payout)}</b></div><span>${b.status}</span></article>`).join(""):`<div class="notice">此玩家代號還沒有下注紀錄。</div>`;
 }
 function suggested(c){
   const totals=c.attempts.map(a=>Number(a.total));
   if(!totals.length)return 10;
   const improvements=totals.slice(1).map((x,i)=>x-totals[i]);
   const trend=improvements.length?improvements.reduce((a,b)=>a+b,0)/improvements.length:0;
-  return Math.round(Math.min(90,Math.max(5,50+(totals.at(-1)-360)*.5+trend*.8-Math.max(0,c.attempt-2)*5)));
+  return Math.round(Math.min(90,Math.max(5,50+(totals.at(-1)-360)*.5+trend*.3-Math.max(0,c.attempt-2)*5)));
 }
 function renderAdmin(){
   if(!qs("#adminCards"))return;
@@ -266,12 +264,21 @@ async function enterPlayer(){
   if(code.length<2)return qs("#playerGateMessage").textContent="玩家代號至少 2 個字元";
   playerCode=code;localStorage.setItem("vet-player-code",code);
   qs("#playerChip strong").textContent=code;qs("#playerGate").classList.add("hidden");
+  bets=[];renderRecords();await loadPlayerBets();
   sbRequest("/rest/v1/players",{method:"POST",headers:{Prefer:"return=minimal"},body:{code}})
     .catch(error=>console.warn("玩家代號已存在或暫時無法登記",error));
 }
 qs("#enterMarket").onclick=enterPlayer;
 qs("#playerChip").onclick=showPlayerGate;
-if(playerCode){qs("#playerChip strong").textContent=playerCode;qs("#playerGate").classList.add("hidden")}
+if(playerCode){qs("#playerChip strong").textContent=playerCode;qs("#playerGate").classList.add("hidden");loadPlayerBets()}
+async function loadPlayerBets(){
+  if(!playerCode)return;
+  try{
+    const rows=await sbRequest("/rest/v1/rpc/get_player_bets",{method:"POST",body:{p_code:playerCode}});
+    bets=rows.map(b=>({id:b.id,name:b.player_code||b.bettor_name,stake:Number(b.stake),type:b.bet_type,selections:b.selections,totalOdd:Number(b.total_odd),payout:Number(b.payout),date:new Date(b.created_at).toLocaleString("zh-TW"),status:b.status}));
+    renderRecords();updatePool();
+  }catch(error){console.error(error);toast("無法載入此代號的雲端紀錄")}
+}
 async function loadSharedMarket(){
   try{
     const [remoteCandidates,settings]=await Promise.all([
