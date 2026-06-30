@@ -235,7 +235,10 @@ function saveSettings(){
   qsa(".admin-card").forEach(card=>{const c=candidates.find(x=>x.id===card.dataset.id);c.name=card.querySelector(".adm-name").value.trim()||c.name;c.attempt=Number(card.querySelector(".adm-attempt").value);c.scores=card.querySelector(".adm-scores").value.split(/[,，\s]+/).map(Number).filter(x=>x>=0&&x<=100);c.prob=Math.min(95,Math.max(5,Number(card.querySelector(".adm-prob").value)))});
   margin=Number(qs("#margin").value);localStorage.setItem("vet-candidates",JSON.stringify(candidates));localStorage.setItem("vet-margin",margin);picks=[];renderAll();toast("盤口已更新");
 }
-function updatePool(){qs("#poolTotal").textContent=money(bets.reduce((a,b)=>a+b.stake,0))}
+function updatePool(){
+  const pool=qs("#poolTotal");
+  if(pool)pool.textContent=money(bets.reduce((a,b)=>a+b.stake,0));
+}
 function renderAll(){renderCandidates();renderSlip();renderRecords();renderAdmin();updatePool()}
 function toast(msg){qs("#toast").textContent=msg;qs("#toast").classList.add("show");setTimeout(()=>qs("#toast").classList.remove("show"),2200)}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
