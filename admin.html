@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#121612">
+  <title>莊家後台｜白袍上岸局</title>
+  <style>:root{--bg:#f2f0e8;--ink:#151915;--muted:#6c716b;--line:#d8d6cc;--card:#faf9f4;--green:#184b38;--lime:#c5ef53;--orange:#f17a48;--dark:#111611}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Noto Sans TC","Microsoft JhengHei",sans-serif}.topbar{height:76px;padding:0 max(24px,calc((100vw - 1240px)/2));display:flex;align-items:center;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(242,240,232,.94);backdrop-filter:blur(14px);z-index:20}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-weight:900;letter-spacing:.03em}.brand-mark{display:grid;place-items:center;width:36px;height:36px;background:var(--green);color:var(--lime);border-radius:11px;font-family:Georgia;font-size:22px}.brand small{display:block;font-size:8px;letter-spacing:.2em;color:var(--muted);margin-top:2px}.topbar nav{display:flex;margin:auto;gap:4px}.nav-btn{border:0;background:transparent;padding:12px 16px;border-radius:10px;color:var(--muted);font-weight:700;cursor:pointer}.nav-btn.active{background:#fff;color:var(--ink);box-shadow:0 2px 10px #24362610}.pool-chip{font-size:12px;color:var(--muted);background:#e4e2d8;padding:9px 12px;border-radius:20px}.pool-chip strong{color:var(--green);margin-left:4px}main{max-width:1240px;margin:auto;padding:30px 24px 120px}.hidden{display:none!important}.hero{min-height:330px;background:var(--dark);color:white;border-radius:24px;padding:48px 54px;display:grid;grid-template-columns:1.25fr .75fr;overflow:hidden;position:relative}.eyebrow,.kicker{font-size:11px;letter-spacing:.18em;font-weight:900}.eyebrow{color:#cbd0c9}.live-dot{width:7px;height:7px;border-radius:50%;display:inline-block;background:var(--lime);box-shadow:0 0 0 5px #c5ef5320;margin-right:8px}.hero h1{font-size:56px;line-height:1.02;margin:24px 0 18px;letter-spacing:-.04em}.hero h1 em{font-family:Georgia,serif;font-weight:400;color:var(--lime)}.hero p{max-width:510px;color:#aeb5ad;line-height:1.7}.hero-meta{display:flex;gap:25px;color:#8e978e;font-size:12px;margin-top:30px}.hero-art{position:relative;min-height:220px}.orbit{position:absolute;border:1px solid #9ac44255;border-radius:50%;inset:5%}.orbit-a{transform:rotate(28deg) scaleX(.65)}.orbit-b{transform:rotate(-38deg) scaleX(.55)}.cross{position:absolute;font-size:180px;color:#c5ef5317;right:20%;top:0}.paw{position:absolute;right:30%;top:35%;font-size:70px;color:var(--lime);line-height:.45;text-align:center;transform:rotate(-10deg)}.paw i{font-size:25px;font-style:normal;letter-spacing:2px}.section-head{display:flex;align-items:end;justify-content:space-between;margin:45px 0 18px}.kicker{color:var(--green)}h2{font-size:30px;margin:6px 0 0}.legend{display:flex;gap:16px;color:var(--muted);font-size:12px}.swatch{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.swatch.pass{background:var(--green)}.swatch.fail{background:var(--orange)}.candidate-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.candidate-card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.2s}.candidate-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px #26301c12}.card-top{height:105px;background:linear-gradient(135deg,#d7dfcf,#b6c7aa);padding:18px;position:relative}.candidate-card:nth-child(2) .card-top{background:linear-gradient(135deg,#e2d9cd,#c8ae9c)}.candidate-card:nth-child(3) .card-top{background:linear-gradient(135deg,#d0dbdf,#a8bdc4)}.candidate-card:nth-child(4) .card-top{background:linear-gradient(135deg,#ddd3df,#beaac5)}.avatar{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:#fff9;border:1px solid #fff;color:var(--green);font-size:28px;font-weight:900}.attempt{position:absolute;right:15px;top:15px;background:#111611;color:white;padding:6px 9px;border-radius:12px;font-size:10px}.card-content{padding:18px}.candidate-name{display:flex;justify-content:space-between;align-items:center}.candidate-name h3{margin:0;font-size:20px}.chance{font-size:11px;color:var(--muted)}.chance b{display:block;color:var(--green);font-size:18px;text-align:right}.history{font-size:11px;color:var(--muted);padding:12px 0;border-bottom:1px solid var(--line)}.history strong{color:var(--ink)}.odds-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.odd-btn{border:1px solid var(--line);background:white;border-radius:11px;padding:10px;text-align:left;cursor:pointer;transition:.15s}.odd-btn span{font-size:10px;color:var(--muted);display:block}.odd-btn b{font-size:18px}.odd-btn:hover,.odd-btn.selected{border-color:var(--green);background:#eaf2df;color:var(--green)}.odd-btn.fail:hover,.odd-btn.fail.selected{border-color:var(--orange);background:#fff0e9;color:#ba4a20}.bet-slip{position:fixed;z-index:25;right:24px;bottom:18px;width:380px;background:#fff;border-radius:18px;box-shadow:0 18px 60px #12161235;overflow:hidden}.slip-head{width:100%;border:0;background:var(--green);color:#fff;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;font-weight:900;cursor:pointer}.slip-head b{background:var(--lime);color:var(--ink);border-radius:50%;padding:2px 7px}.slip-head small{color:#bfd0c7}.slip-body{max-height:65vh;overflow:auto;padding:14px 18px}.empty-slip{text-align:center;color:var(--muted);padding:20px;font-size:13px}.pick{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.pick .mini-avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#e6eadf;font-weight:900}.pick-text{flex:1;font-size:12px}.pick-text b{display:block}.pick-odd{font-weight:900}.remove-pick{border:0;background:transparent;color:#999;cursor:pointer;font-size:18px}.bet-type{display:grid;grid-template-columns:1fr 1fr;background:#eee;border-radius:10px;padding:3px;margin:10px 0}.bet-type button{border:0;padding:8px;background:transparent;border-radius:8px;cursor:pointer}.bet-type button.active{background:white;box-shadow:0 2px 6px #0001;font-weight:800}.wager-area label{font-size:11px;color:var(--muted);display:block;margin-top:10px}.wager-area input{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;margin-top:5px;font:inherit}.money-input{position:relative}.money-input span{position:absolute;top:16px;left:12px}.money-input input{padding-left:26px}.quick-stakes{display:flex;gap:6px;margin-top:7px}.quick-stakes button{flex:1;border:1px solid var(--line);background:white;border-radius:7px;padding:6px;cursor:pointer}.return-row{display:flex;justify-content:space-between;align-items:center;margin:16px 0;font-size:12px}.return-row span:last-child{text-align:right}.return-row strong{display:block;font-size:22px;color:var(--green)}.place-btn{width:100%;border:0;background:var(--green);color:white;padding:13px;border-radius:10px;font-weight:900;cursor:pointer}.place-btn:hover{background:#0c3928}.fine-print{font-size:9px;color:#969b96;text-align:center}.page-title{padding:35px 0}.page-title h1{font-size:44px;margin:8px 0}.page-title p{color:var(--muted)}.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stats-row>div{background:var(--card);border:1px solid var(--line);padding:20px;border-radius:15px}.stats-row small{color:var(--muted)}.stats-row strong{display:block;font-size:28px;margin-top:5px}.record-list{margin-top:18px}.record{display:grid;grid-template-columns:1.2fr 2fr 1fr auto;gap:15px;align-items:center;background:var(--card);border:1px solid var(--line);padding:18px;border-radius:14px;margin-bottom:9px}.record small{color:var(--muted);display:block}.record .selections{font-size:12px}.delete-record{border:0;background:transparent;color:#a09e96;cursor:pointer}.notice{background:#e4ead7;border-left:4px solid var(--green);padding:14px 18px;border-radius:8px;margin-bottom:18px;font-size:13px}.admin-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.admin-card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:20px}.admin-card h3{margin-top:0}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.admin-card label{font-size:11px;color:var(--muted)}.admin-card input{display:block;width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;margin-top:5px}.score-inputs{display:flex;gap:8px}.suggestion{margin-top:12px;padding:10px;background:#eef1e9;border-radius:8px;font-size:12px}.admin-actions{margin-top:16px;background:var(--card);border:1px solid var(--line);padding:18px;border-radius:15px;display:flex;align-items:center;gap:15px}.admin-actions label{flex:1;font-size:13px}.admin-actions input{width:100%;margin-top:8px}.admin-actions .place-btn{width:220px}.ghost-btn{border:1px solid var(--line);background:white;padding:12px;border-radius:9px;cursor:pointer}.toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,20px);background:#111611;color:white;padding:12px 18px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s;z-index:50}.toast.show{opacity:1;transform:translate(-50%,0)}
+.bet-slip.collapsed .slip-body{display:none}.bet-slip.collapsed .chevron{transform:rotate(180deg)}
+.admin-preview-link{text-decoration:none;color:var(--ink);font-size:12px}.admin-note{margin-top:18px;background:#eeeae0;border-left-color:#8d918a}
+.candidate-admin{grid-column:1/-1}.admin-card-title{display:flex;justify-content:space-between;align-items:center}.admin-card-title span{font-size:12px;color:var(--muted)}.identity-fields{grid-template-columns:2fr 1fr 1fr;margin-bottom:16px}.attempt-list{display:grid;gap:12px}.exam-attempt{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}.attempt-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}.manual-total{display:flex!important;align-items:center;gap:8px;font-weight:800;color:var(--green)!important}.manual-total input{width:100px!important;margin:0!important}.subject-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.subject-grid label{font-size:11px;color:var(--muted)}.subject-grid input{margin-top:4px}.use-suggestion{float:right;border:1px solid var(--green);background:white;color:var(--green);border-radius:7px;padding:5px 9px;cursor:pointer}
+.challenger-toolbar{display:flex;justify-content:space-between;align-items:center;margin:4px 0 14px}.challenger-toolbar small{display:block;color:var(--muted);margin-top:4px}.add-candidate{width:auto;padding:11px 17px}.code-badge{display:inline-grid;place-items:center;min-width:32px;height:32px;padding:0 8px;background:var(--green);color:var(--lime)!important;border-radius:9px;margin-right:9px}.admin-card-title>div{display:flex;align-items:center;gap:12px}.remove-candidate{border:1px solid #e3b8a8;background:#fff5f1;color:#b54820;padding:6px 9px;border-radius:7px;cursor:pointer}.identity-fields{grid-template-columns:1fr 2fr 1fr 1fr}
+.no-history{padding:18px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);text-align:center;font-size:13px;background:#f7f6f0}
+.admin-login{min-height:70vh;display:grid;place-items:center}.login-card{width:min(440px,100%);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px;box-shadow:0 18px 50px #15201612}.login-card h1{margin:8px 0}.login-card p{color:var(--muted);font-size:13px;line-height:1.6}.login-card label{display:block;font-size:12px;color:var(--muted);margin-top:14px}.login-card input{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;margin-top:5px}.login-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}.login-message{color:#b54820!important}.compact-title{padding-bottom:8px}
+@media(max-width:900px){.pool-chip{display:none}.candidate-grid{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1fr}.hero-art{display:none}.admin-grid{grid-template-columns:1fr}.record{grid-template-columns:1fr 1fr}.bet-slip{width:calc(100% - 24px);right:12px}.topbar{padding:0 12px}.brand>span:last-child{display:none}.nav-btn{padding:10px 9px;font-size:12px}}
+@media(max-width:560px){main{padding:18px 12px 110px}.topbar{height:62px}.hero{padding:30px 24px;min-height:auto}.hero h1{font-size:42px}.hero-meta{display:block}.hero-meta span{display:block;margin-top:8px}.candidate-grid{grid-template-columns:1fr}.section-head{margin-top:30px}.legend{display:none}.stats-row{grid-template-columns:1fr}.admin-actions{flex-direction:column;align-items:stretch}.admin-actions .place-btn{width:100%}.record{grid-template-columns:1fr}.page-title h1{font-size:36px}.identity-fields,.subject-grid{grid-template-columns:1fr 1fr}.admin-card-title{align-items:flex-start;gap:8px}.attempt-title{align-items:flex-start;gap:8px}}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="admin.html">
+      <span class="brand-mark">V</span>
+      <span>白袍上岸局<small>BOOKMAKER DESK</small></span>
+    </a>
+    <nav><span class="nav-btn active">莊家設定</span></nav>
+    <a class="ghost-btn admin-preview-link" href="index.html">查看下注頁 →</a>
+  </header>
+  <main>
+    <section id="loginPanel" class="admin-login">
+      <div class="login-card">
+        <span class="kicker">BOOKMAKER LOGIN</span>
+        <h1>莊家登入</h1>
+        <p>第一次使用請建立莊家帳號；之後使用同一組 Email 與密碼登入。</p>
+        <label>Email<input id="adminEmail" type="email" autocomplete="username" placeholder="name@example.com"></label>
+        <label>密碼<input id="adminPassword" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 個字元"></label>
+        <div class="login-actions"><button id="loginAdmin" class="place-btn">登入</button><button id="signupAdmin" class="ghost-btn">建立初始帳號</button></div>
+        <p id="loginMessage" class="login-message"></p>
+      </div>
+    </section>
+    <section id="adminContent" class="hidden">
+      <div class="page-title"><span class="kicker">PRIVATE DESK</span><h1>莊家設定</h1><p>這個頁面只提供給莊家；下注者請分享 index.html。</p></div>
+      <div class="notice">
+        <strong>及格規則：</strong>六科各 100 分，手動總分達 360 分通過。各科成績可留白，且不會自動加總。<br>
+        <strong>建議機率：</strong>50% ＋（最近總分－360）× 0.5 ＋ 平均進步分數 × 0.8
+        － 第 3 次起每多一次應試扣 5%。結果限制在 5%～90%；模型只採用手動總分。
+      </div>
+      <div class="challenger-toolbar">
+        <div><strong>挑戰者模組</strong><small>可自由新增、移除及重新命名</small></div>
+        <button id="addCandidate" class="place-btn add-candidate">＋ 新增挑戰者</button>
+      </div>
+      <div id="adminCards" class="admin-grid"></div>
+      <div class="admin-actions">
+        <label>莊家水位 <span id="marginLabel">8%</span><input id="margin" type="range" min="0" max="20" value="8"></label>
+        <button id="resetData" class="ghost-btn">重設示範資料</button>
+        <button id="saveSettings" class="place-btn">儲存並更新盤口</button>
+      </div>
+      <div class="notice admin-note">儲存後，下注頁會在同一個瀏覽器中立即套用新盤口。若要讓不同手機共用資料，下一步需部署共用資料庫。</div>
+      <div class="page-title compact-title"><span class="kicker">LIVE BETS</span><h1>大家的下注紀錄</h1></div>
+      <div id="sharedBetList" class="record-list"></div>
+    </section>
+  </main>
+  <div id="toast" class="toast"></div>
+  <script>const SUPABASE_URL="https://zqkignxuaqeltkabgglv.supabase.co";
+const SUPABASE_KEY="sb_publishable_55Ct7K7mXc-N-iLsSCYfkg_PgdU3lcd";
+async function sbRequest(path,{method="GET",body,token,headers={}}={}){
+  const response=await fetch(`${SUPABASE_URL}${path}`,{
+    method,
+    headers:{
+      apikey:SUPABASE_KEY,
+      Authorization:`Bearer ${token||SUPABASE_KEY}`,
+      "Content-Type":"application/json",
+      ...headers
+    },
+    body:body===undefined?undefined:JSON.stringify(body)
+  });
+  if(!response.ok){
+    const detail=await response.text();
+    throw new Error(detail||`Supabase ${response.status}`);
+  }
+  if(response.status===204)return null;
+  const text=await response.text();
+  return text?JSON.parse(text):null;
+}
+</script>
+  <script>const SUBJECTS=["獸醫藥理學","獸醫病理學","獸醫公共衛生學","獸醫普通病學","獸醫傳染病學","獸醫實驗診斷學"];
+const DEFAULTS=[
+  {id:"a",code:"A",name:"挑戰者 A",attempt:2,attempts:[{total:330,subjects:[56,54,61,52,55,52]}],prob:35},
+  {id:"b",code:"B",name:"挑戰者 B",attempt:3,attempts:[{total:282,subjects:[47,49,52,46,43,45]},{total:340,subjects:[58,56,61,55,54,56]}],prob:35},
+  {id:"c",code:"C",name:"挑戰者 C",attempt:3,attempts:[{total:306,subjects:[52,50,55,48,51,50]},{total:336,subjects:[56,58,59,54,55,54]}],prob:31},
+  {id:"d",code:"D",name:"挑戰者 D",attempt:3,attempts:[{total:268,subjects:[43,46,48,42,45,44]},{total:294,subjects:[49,50,53,47,48,47]}],prob:12}
+];
+function normalizeCandidates(data){
+  return data.map((c,i)=>{
+    const code=c.code||String.fromCharCode(65+i);
+    if(c.attempts)return {...c,code,attempts:c.attempts.map(a=>Array.isArray(a)?{total:a.reduce((s,x)=>s+Number(x||0),0),subjects:a}:a)};
+    return {...c,code,attempts:(c.scores||[]).map(avg=>({total:avg*6,subjects:[avg,avg,avg,avg,avg,avg]})),scores:undefined,id:c.id||`candidate-${Date.now()}-${i}`};
+  });
+}
+let candidates=normalizeCandidates(JSON.parse(localStorage.getItem("vet-candidates"))||structuredClone(DEFAULTS));
+let margin=Number(localStorage.getItem("vet-margin")||8);
+let adminToken=sessionStorage.getItem("vet-admin-token")||"";
+let savedCandidateIds=[];
+const $=s=>document.querySelector(s), $=s=>[...document.querySelectorAll(s)];
+const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function suggested(c){
+  const totals=c.attempts.map(a=>Number(a.total)).filter(Number.isFinite);
+  if(!totals.length)return 10;
+  const changes=totals.slice(1).map((score,i)=>score-totals[i]);
+  const trend=changes.length?changes.reduce((a,b)=>a+b,0)/changes.length:0;
+  return Math.round(Math.min(90,Math.max(5,50+(totals.at(-1)-360)*.5+trend*.8-Math.max(0,c.attempt-2)*5)));
+}
+function attemptEditor(exam,index){
+  const subjects=exam.subjects||[];
+  return `<div class="exam-attempt">
+    <div class="attempt-title"><strong>第 ${index+1} 次考試</strong><label class="manual-total">手動總分<input class="exam-total" type="number" min="0" max="600" value="${exam.total??""}" placeholder="必填"></label></div>
+    <div class="subject-grid">${SUBJECTS.map((subject,i)=>`<label>${subject}<input class="subject-score" type="number" min="0" max="100" value="${subjects[i]??""}" placeholder="可留白"></label>`).join("")}</div>
+  </div>`;
+}
+function render(){
+  $("#margin").value=margin;$("#marginLabel").textContent=margin+"%";
+  $("#adminCards").innerHTML=candidates.map((c,i)=>`<div class="admin-card candidate-admin" data-id="${c.id}">
+    <div class="admin-card-title"><h3><span class="code-badge">${escapeHtml(c.code)}</span>${escapeHtml(c.name)}</h3><div><span>今年第 ${c.attempt} 次應試</span><button class="remove-candidate" type="button" title="移除挑戰者">移除</button></div></div>
+    <div class="form-grid identity-fields">
+      <label>挑戰者代號<input class="adm-code" maxlength="6" value="${escapeHtml(c.code)}" placeholder="例如 A"></label>
+      <label>顯示名稱<input class="adm-name" value="${escapeHtml(c.name)}"></label>
+      <label>今年第幾次應試<input class="adm-attempt" type="number" min="1" max="9" value="${c.attempt}"></label>
+      <label>採用的莊家通過率 %<input class="adm-prob" type="number" min="5" max="95" value="${c.prob}"></label>
+    </div>
+    <div class="attempt-list">${c.attempts.length?c.attempts.map(attemptEditor).join(""):`<div class="no-history">今年是第 1 次應試，不需要輸入歷次成績。</div>`}</div>
+    <div class="suggestion">模型建議通過率：<b>${suggested(c)}%</b><button class="use-suggestion" type="button">套用建議</button></div>
+  </div>`).join("");
+  $(".exam-total").forEach(input=>input.oninput=updateSuggestion);
+  $(".adm-attempt").forEach(input=>input.onchange=syncAttempts);
+  $(".use-suggestion").forEach(button=>button.onclick=useSuggestion);
+  $(".remove-candidate").forEach(button=>button.onclick=removeCandidate);
+}
+function readCard(card){
+  const c=candidates.find(x=>x.id===card.dataset.id);
+  c.code=card.querySelector(".adm-code").value.trim()||"?";
+  c.name=card.querySelector(".adm-name").value.trim()||c.name;
+  c.attempt=Math.max(1,Number(card.querySelector(".adm-attempt").value)||1);
+  c.prob=Math.min(95,Math.max(5,Number(card.querySelector(".adm-prob").value)||5));
+  c.attempts=[...card.querySelectorAll(".exam-attempt")].map(exam=>({
+    total:Math.min(600,Math.max(0,Number(exam.querySelector(".exam-total").value)||0)),
+    subjects:[...exam.querySelectorAll(".subject-score")].map(x=>x.value===""?null:Math.min(100,Math.max(0,Number(x.value))))
+  }));
+  return c;
+}
+function updateSuggestion(e){
+  const card=e.target.closest(".admin-card"),c=readCard(card);
+  card.querySelector(".suggestion b").textContent=suggested(c)+"%";
+}
+function syncAttempts(e){
+  const card=e.target.closest(".admin-card"),c=readCard(card),previousCount=Math.max(0,c.attempt-1);
+  while(c.attempts.length<previousCount)c.attempts.push({total:0,subjects:[null,null,null,null,null,null]});
+  c.attempts=c.attempts.slice(0,previousCount);render();
+}
+function useSuggestion(e){
+  const card=e.target.closest(".admin-card"),c=readCard(card);
+  c.prob=suggested(c);card.querySelector(".adm-prob").value=c.prob;toast(`已套用 ${c.prob}%`);
+}
+function preserveEdits(){
+  $(".admin-card").forEach(readCard);
+}
+function removeCandidate(e){
+  const card=e.target.closest(".admin-card"),c=candidates.find(x=>x.id===card.dataset.id);
+  if(!confirm(`確定移除「${c.name}」？既有下注紀錄不會刪除。`))return;
+  preserveEdits();candidates=candidates.filter(x=>x.id!==card.dataset.id);render();toast("已移除挑戰者，請記得儲存");
+}
+$("#addCandidate").onclick=()=>{
+  preserveEdits();
+  const next=candidates.length+1;
+  candidates.push({id:`candidate-${Date.now()}`,code:`C${next}`,name:`新挑戰者 ${next}`,attempt:2,attempts:[{total:0,subjects:[null,null,null,null,null,null]}],prob:20});
+  render();toast("已新增挑戰者，請填寫資料");
+};
+function toast(msg){$("#toast").textContent=msg;$("#toast").classList.add("show");setTimeout(()=>$("#toast").classList.remove("show"),2200)}
+$("#margin").oninput=e=>$("#marginLabel").textContent=e.target.value+"%";
+$("#saveSettings").onclick=async()=>{
+  $(".admin-card").forEach(card=>{
+    const c=readCard(card),required=Math.max(0,c.attempt-1);
+    while(c.attempts.length<required)c.attempts.push({total:0,subjects:[null,null,null,null,null,null]});
+    c.attempts=c.attempts.slice(0,required);
+  });margin=Number($("#margin").value);
+  localStorage.setItem("vet-candidates",JSON.stringify(candidates));localStorage.setItem("vet-margin",margin);
+  try{
+    const currentIds=candidates.map(c=>c.id);
+    const removed=savedCandidateIds.filter(id=>!currentIds.includes(id));
+    if(removed.length)await sbRequest(`/rest/v1/candidates?id=in.(${removed.map(encodeURIComponent).join(",")})`,{method:"DELETE",token:adminToken});
+    await sbRequest("/rest/v1/candidates?on_conflict=id",{method:"POST",token:adminToken,headers:{Prefer:"resolution=merge-duplicates"},body:candidates.map((c,i)=>({id:c.id,code:c.code,name:c.name,attempt:c.attempt,attempts:c.attempts,probability:c.prob,sort_order:i+1,updated_at:new Date().toISOString()}))});
+    await sbRequest("/rest/v1/settings?on_conflict=id",{method:"POST",token:adminToken,headers:{Prefer:"resolution=merge-duplicates"},body:{id:"main",margin,updated_at:new Date().toISOString()}});
+    savedCandidateIds=[...currentIds];render();toast("盤口已同步給所有下注者");
+  }catch(error){console.error(error);toast("同步失敗，請重新登入")}
+};
+$("#resetData").onclick=()=>{
+  if(confirm("要恢復匿名示範資料與預設水位嗎？")){
+    candidates=structuredClone(DEFAULTS);margin=8;localStorage.removeItem("vet-candidates");localStorage.removeItem("vet-margin");
+    render();toast("已恢復示範資料");
+  }
+};
+async function authenticate(mode){
+  const email=$("#adminEmail").value.trim(),password=$("#adminPassword").value;
+  if(!email||password.length<6)return $("#loginMessage").textContent="請輸入 Email 與至少 6 個字元的密碼";
+  $("#loginMessage").textContent="連線中…";
+  try{
+    const path=mode==="signup"?"/auth/v1/signup":"/auth/v1/token?grant_type=password";
+    const data=await sbRequest(path,{method:"POST",body:{email,password}});
+    const token=data.access_token||data.session?.access_token;
+    if(!token)throw new Error("請先到信箱完成驗證，再回來登入");
+    adminToken=token;sessionStorage.setItem("vet-admin-token",token);await enterAdmin();
+  }catch(error){$("#loginMessage").textContent=error.message.includes("already")?"帳號已存在，請改按登入":error.message}
+}
+async function enterAdmin(){
+  try{
+    const [remoteCandidates,settings,remoteBets]=await Promise.all([
+      sbRequest("/rest/v1/candidates?select=*&order=sort_order.asc",{token:adminToken}),
+      sbRequest("/rest/v1/settings?id=eq.main&select=*",{token:adminToken}),
+      sbRequest("/rest/v1/bets?select=*&order=created_at.desc",{token:adminToken})
+    ]);
+    candidates=remoteCandidates.map(c=>({id:c.id,code:c.code,name:c.name,attempt:c.attempt,attempts:c.attempts,prob:Number(c.probability)}));
+    margin=Number(settings?.[0]?.margin??8);savedCandidateIds=candidates.map(c=>c.id);
+    $("#loginPanel").classList.add("hidden");$("#adminContent").classList.remove("hidden");
+    render();renderSharedBets(remoteBets);
+  }catch(error){adminToken="";sessionStorage.removeItem("vet-admin-token");$("#loginMessage").textContent="登入已失效，請重新登入"}
+}
+function renderSharedBets(rows){
+  $("#sharedBetList").innerHTML=rows.length?rows.map(b=>`<article class="record"><div><b>${escapeHtml(b.bettor_name)}</b><small>${new Date(b.created_at).toLocaleString("zh-TW")}・${b.bet_type==="parlay"?"串關":"各別單關"}</small></div><div class="selections">${b.selections.map(s=>`${escapeHtml(s.name)} ${s.outcome==="pass"?"通過":"未通過"} @ ${s.odd}`).join(" ＋ ")}</div><div><small>下注 ${Number(b.stake).toLocaleString()}</small><b>可能派彩 ${Math.round(b.payout).toLocaleString()}</b></div><span>${b.status}</span></article>`).join(""):`<div class="notice">目前還沒有任何下注。</div>`;
+}
+$("#loginAdmin").onclick=()=>authenticate("login");
+$("#signupAdmin").onclick=()=>authenticate("signup");
+if(adminToken)enterAdmin();
+</script>
+</body>
+</html>
