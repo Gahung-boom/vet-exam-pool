@@ -14,11 +14,22 @@
 .candidate-speech{margin:10px 0 2px;padding:9px 11px;border-left:3px solid var(--lime);background:#f0f3e8;color:var(--green);font-size:12px;font-weight:700;border-radius:0 8px 8px 0}.speech-field{grid-column:1/-1}.speech-field textarea{display:block;width:100%;min-height:66px;resize:vertical;padding:9px;border:1px solid var(--line);border-radius:8px;margin-top:5px;font:inherit}
 .no-history{padding:18px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);text-align:center;font-size:13px;background:#f7f6f0}
 .admin-login{min-height:70vh;display:grid;place-items:center}.login-card{width:min(440px,100%);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px;box-shadow:0 18px 50px #15201612}.login-card h1{margin:8px 0}.login-card p{color:var(--muted);font-size:13px;line-height:1.6}.login-card label{display:block;font-size:12px;color:var(--muted);margin-top:14px}.login-card input{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;margin-top:5px}.login-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}.login-message{color:#b54820!important}.compact-title{padding-bottom:8px}
+.player-gate{position:fixed;inset:0;background:rgba(17,22,17,.92);backdrop-filter:blur(10px);z-index:100;display:grid;place-items:center;padding:20px}.player-gate.hidden{display:none}.player-gate .place-btn{margin-top:18px}.player-chip{border:0;cursor:pointer}.single-stake{width:78px!important;padding:6px!important;margin:0!important}.pick.single-mode{flex-wrap:wrap}.pick.single-mode .single-stake-wrap{width:100%;display:flex;justify-content:flex-end;align-items:center;gap:7px;font-size:10px;color:var(--muted)}.settlement-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0 20px}.result-option{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px}.result-option b{display:block;margin-bottom:9px}.result-option select{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px}.player-summary{display:grid;grid-template-columns:1.2fr repeat(4,1fr);gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);padding:14px;border-radius:11px;margin-bottom:8px}.player-summary small{display:block;color:var(--muted)}
 @media(max-width:900px){.pool-chip{display:none}.candidate-grid{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1fr}.hero-art{display:none}.admin-grid{grid-template-columns:1fr}.record{grid-template-columns:1fr 1fr}.bet-slip{width:calc(100% - 24px);right:12px}.topbar{padding:0 12px}.brand>span:last-child{display:none}.nav-btn{padding:10px 9px;font-size:12px}}
 @media(max-width:560px){main{padding:18px 12px 110px}.topbar{height:62px}.hero{padding:30px 24px;min-height:auto}.hero h1{font-size:42px}.hero-meta{display:block}.hero-meta span{display:block;margin-top:8px}.candidate-grid{grid-template-columns:1fr}.section-head{margin-top:30px}.legend{display:none}.stats-row{grid-template-columns:1fr}.admin-actions{flex-direction:column;align-items:stretch}.admin-actions .place-btn{width:100%}.record{grid-template-columns:1fr}.page-title h1{font-size:36px}.identity-fields,.subject-grid{grid-template-columns:1fr 1fr}.admin-card-title{align-items:flex-start;gap:8px}.attempt-title{align-items:flex-start;gap:8px}}
 </style>
 </head>
 <body>
+  <section id="playerGate" class="player-gate">
+    <div class="login-card">
+      <span class="kicker">PLAYER CHECK-IN</span>
+      <h1>輸入玩家代號</h1>
+      <p>每位玩家使用一個唯一代號；這台裝置會記住你。</p>
+      <label>玩家代號<input id="playerCodeInput" maxlength="16" placeholder="例如 LAB07"></label>
+      <button id="enterMarket" class="place-btn">進入下注畫面</button>
+      <p id="playerGateMessage" class="login-message"></p>
+    </div>
+  </section>
   <header class="topbar">
     <a class="brand" href="#">
       <span class="brand-mark">V</span>
@@ -28,7 +39,7 @@
       <button class="nav-btn active" data-view="market">本期盤口</button>
       <button class="nav-btn" data-view="records">我的紀錄</button>
     </nav>
-    <div class="pool-chip">本期模擬池 <strong id="poolTotal">$0</strong></div>
+    <button id="playerChip" class="pool-chip player-chip" title="切換玩家">玩家 <strong>—</strong></button>
   </header>
 
   <main>
@@ -69,8 +80,7 @@
               <button class="active" data-type="parlay">串關</button>
               <button data-type="singles">各別單關</button>
             </div>
-            <label>下注人暱稱<input id="bettorName" maxlength="16" placeholder="例如：小明"></label>
-            <label>模擬下注額
+            <label id="commonStakeLabel">模擬下注額
               <div class="money-input"><span>$</span><input id="stake" type="number" min="10" step="10" value="100"></div>
             </label>
             <div class="quick-stakes"><button>50</button><button>100</button><button>200</button><button>500</button></div>
@@ -135,7 +145,7 @@ function normalizeCandidates(data){
 let candidates=normalizeCandidates(JSON.parse(localStorage.getItem("vet-candidates"))||structuredClone(DEFAULTS));
 let margin=Number(localStorage.getItem("vet-margin")||8);
 let bets=JSON.parse(localStorage.getItem("vet-bets"))||[];
-let picks=[],betType="parlay";
+let picks=[],betType="parlay",singleStakes={},playerCode=localStorage.getItem("vet-player-code")||"";
 const qs=s=>document.querySelector(s), qsa=s=>[...document.querySelectorAll(s)];
 const money=n=>"$"+Math.round(n).toLocaleString("zh-TW");
 function odds(prob,outcome){
@@ -171,26 +181,32 @@ function renderSlip(){
   qs("#slipHint").textContent=picks.length?(picks.length>1?"可建立串關":"可建立單關"):"請選擇盤口";
   qs("#emptySlip").classList.toggle("hidden",!!picks.length);
   qs("#wagerArea").classList.toggle("hidden",!picks.length);
-  qs("#picks").innerHTML=picks.map(p=>{const c=candidates.find(x=>x.id===p.id);return `<div class="pick"><span class="mini-avatar">${escapeHtml(c.code)}</span><span class="pick-text"><b>${escapeHtml(c.name)}</b>${p.outcome==="pass"?"順利通過":"未能通過"}</span><span class="pick-odd">${odds(c.prob,p.outcome)}</span><button class="remove-pick" data-id="${p.id}">×</button></div>`}).join("");
+  qs("#picks").innerHTML=picks.map(p=>{const c=candidates.find(x=>x.id===p.id);return `<div class="pick ${betType==="singles"?"single-mode":""}"><span class="mini-avatar">${escapeHtml(c.code)}</span><span class="pick-text"><b>${escapeHtml(c.name)}</b>${p.outcome==="pass"?"順利通過":"未能通過"}</span><span class="pick-odd">${odds(c.prob,p.outcome)}</span><button class="remove-pick" data-id="${p.id}">×</button>${betType==="singles"?`<label class="single-stake-wrap">此單關下注 $ <input class="single-stake" data-id="${p.id}" type="number" min="10" step="10" value="${singleStakes[p.id]||100}"></label>`:""}</div>`}).join("");
   qsa(".remove-pick").forEach(b=>b.onclick=()=>{picks=picks.filter(p=>p.id!==b.dataset.id);renderCandidates();renderSlip()});
+  qsa(".single-stake").forEach(input=>input.oninput=()=>{singleStakes[input.dataset.id]=Number(input.value);calculate()});
+  qs("#commonStakeLabel").classList.toggle("hidden",betType==="singles");
+  qs(".quick-stakes").classList.toggle("hidden",betType==="singles");
   calculate();
 }
 function calculate(){
   const stake=Math.max(0,Number(qs("#stake")?.value||0));
   const values=picks.map(p=>Number(odds(candidates.find(c=>c.id===p.id).prob,p.outcome)));
-  const total=betType==="parlay"?values.reduce((a,b)=>a*b,1):values.reduce((a,b)=>a+b,0);
+  const total=betType==="parlay"?values.reduce((a,b)=>a*b,1):0;
+  const singlePayout=picks.reduce((sum,p,i)=>sum+Math.max(0,Number(singleStakes[p.id]||100))*values[i],0);
   qs("#totalOdds").textContent=picks.length?(betType==="parlay"?total.toFixed(2):"各別"):"—";
-  qs("#payout").textContent=money(stake*total);
+  qs("#payout").textContent=money(betType==="parlay"?stake*total:singlePayout);
 }
 async function placeBet(){
-  const name=qs("#bettorName").value.trim(), stake=Number(qs("#stake").value);
-  if(!name)return toast("請先填寫下注人暱稱");
+  const name=playerCode;
+  const stake=betType==="parlay"?Number(qs("#stake").value):picks.reduce((sum,p)=>sum+Number(singleStakes[p.id]||100),0);
+  if(!name)return showPlayerGate();
   if(stake<10)return toast("模擬下注額至少 10 點");
-  const selections=picks.map(p=>{const c=candidates.find(x=>x.id===p.id);return {name:c.name,outcome:p.outcome,odd:Number(odds(c.prob,p.outcome))}});
+  const selections=picks.map(p=>{const c=candidates.find(x=>x.id===p.id);return {candidate_id:c.id,name:c.name,outcome:p.outcome,odd:Number(odds(c.prob,p.outcome)),stake:betType==="singles"?Number(singleStakes[p.id]||100):null}});
   const totalOdd=betType==="parlay"?selections.reduce((a,b)=>a*b.odd,1):selections.reduce((a,b)=>a+b.odd,0);
-  const newBet={id:Date.now(),name,stake,type:betType,selections,totalOdd,payout:stake*totalOdd,date:new Date().toLocaleString("zh-TW"),status:"待開獎"};
+  const payout=betType==="parlay"?stake*totalOdd:selections.reduce((sum,s)=>sum+s.stake*s.odd,0);
+  const newBet={id:Date.now(),name,stake,type:betType,selections,totalOdd,payout,date:new Date().toLocaleString("zh-TW"),status:"待開獎"};
   try{
-    await sbRequest("/rest/v1/bets",{method:"POST",body:{bettor_name:name,stake,bet_type:betType,selections,total_odd:totalOdd,payout:stake*totalOdd}});
+    await sbRequest("/rest/v1/bets",{method:"POST",body:{bettor_name:name,player_code:playerCode,stake,bet_type:betType,selections,total_odd:totalOdd,payout}});
   }catch(error){console.error(error);return toast("連線失敗，下注尚未送出")}
   bets.unshift(newBet);
   localStorage.setItem("vet-bets",JSON.stringify(bets));picks=[];renderCandidates();renderSlip();renderRecords();updatePool();toast("下注已記錄，祝你好眼光！");
@@ -226,7 +242,7 @@ function escapeAttr(s){return escapeHtml(s)}
 qsa(".nav-btn").forEach(btn=>btn.onclick=()=>{qsa(".nav-btn").forEach(x=>x.classList.toggle("active",x===btn));qsa(".view").forEach(v=>v.classList.add("hidden"));qs("#"+btn.dataset.view+"View").classList.remove("hidden");qs("#betSlip").classList.toggle("hidden",btn.dataset.view!=="market")});
 qs("#stake").oninput=calculate;
 qsa(".quick-stakes button").forEach(b=>b.onclick=()=>{qs("#stake").value=b.textContent;calculate()});
-qsa(".bet-type button").forEach(b=>b.onclick=()=>{betType=b.dataset.type;qsa(".bet-type button").forEach(x=>x.classList.toggle("active",x===b));calculate()});
+qsa(".bet-type button").forEach(b=>b.onclick=()=>{betType=b.dataset.type;qsa(".bet-type button").forEach(x=>x.classList.toggle("active",x===b));renderSlip()});
 qs("#placeBet").onclick=placeBet;
 qs("#slipToggle").onclick=()=>qs("#betSlip").classList.toggle("collapsed");
 if(qs("#margin"))qs("#margin").oninput=e=>qs("#marginLabel").textContent=e.target.value+"%";
@@ -234,6 +250,22 @@ if(qs("#saveSettings"))qs("#saveSettings").onclick=saveSettings;
 if(qs("#resetData"))qs("#resetData").onclick=()=>{if(confirm("要恢復匿名示範資料與預設水位嗎？")){candidates=structuredClone(DEFAULTS);margin=8;localStorage.removeItem("vet-candidates");localStorage.removeItem("vet-margin");picks=[];renderAll();toast("已恢復示範資料")}};
 const close=new Date();close.setDate(close.getDate()+14);qs("#closeDate").textContent=close.toLocaleDateString("zh-TW",{month:"long",day:"numeric"});
 renderAll();
+function showPlayerGate(){
+  qs("#playerGate").classList.remove("hidden");
+  qs("#playerCodeInput").value=playerCode;
+}
+async function enterPlayer(){
+  const code=qs("#playerCodeInput").value.trim().toUpperCase().replace(/\s+/g,"-");
+  if(code.length<2)return qs("#playerGateMessage").textContent="玩家代號至少 2 個字元";
+  try{
+    await sbRequest("/rest/v1/players?on_conflict=code",{method:"POST",headers:{Prefer:"resolution=ignore-duplicates"},body:{code}});
+    playerCode=code;localStorage.setItem("vet-player-code",code);
+    qs("#playerChip strong").textContent=code;qs("#playerGate").classList.add("hidden");
+  }catch(error){console.error(error);qs("#playerGateMessage").textContent="代號登入失敗，請稍後再試"}
+}
+qs("#enterMarket").onclick=enterPlayer;
+qs("#playerChip").onclick=showPlayerGate;
+if(playerCode){qs("#playerChip strong").textContent=playerCode;qs("#playerGate").classList.add("hidden")}
 async function loadSharedMarket(){
   try{
     const [remoteCandidates,settings]=await Promise.all([
