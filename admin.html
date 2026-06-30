@@ -15,6 +15,7 @@
 .no-history{padding:18px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);text-align:center;font-size:13px;background:#f7f6f0}
 .admin-login{min-height:70vh;display:grid;place-items:center}.login-card{width:min(440px,100%);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px;box-shadow:0 18px 50px #15201612}.login-card h1{margin:8px 0}.login-card p{color:var(--muted);font-size:13px;line-height:1.6}.login-card label{display:block;font-size:12px;color:var(--muted);margin-top:14px}.login-card input{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;margin-top:5px}.login-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}.login-message{color:#b54820!important}.compact-title{padding-bottom:8px}
 .player-gate{position:fixed;inset:0;background:rgba(17,22,17,.92);backdrop-filter:blur(10px);z-index:100;display:grid;place-items:center;padding:20px}.player-gate.hidden{display:none}.player-gate .place-btn{margin-top:18px}.player-chip{border:0;cursor:pointer}.single-stake{width:78px!important;padding:6px!important;margin:0!important}.pick.single-mode{flex-wrap:wrap}.pick.single-mode .single-stake-wrap{width:100%;display:flex;justify-content:flex-end;align-items:center;gap:7px;font-size:10px;color:var(--muted)}.settlement-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0 20px}.result-option{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px}.result-option b{display:block;margin-bottom:9px}.result-option select{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px}.player-summary{display:grid;grid-template-columns:1.2fr repeat(4,1fr);gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);padding:14px;border-radius:11px;margin-bottom:8px}.player-summary small{display:block;color:var(--muted)}
+.delete-shared-bet{border:1px solid #e3b8a8;background:#fff5f1;color:#b54820;padding:7px 10px;border-radius:7px;cursor:pointer}
 @media(max-width:900px){.pool-chip{display:none}.candidate-grid{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1fr}.hero-art{display:none}.admin-grid{grid-template-columns:1fr}.record{grid-template-columns:1fr 1fr}.bet-slip{width:calc(100% - 24px);right:12px}.topbar{padding:0 12px}.brand>span:last-child{display:none}.nav-btn{padding:10px 9px;font-size:12px}}
 @media(max-width:560px){main{padding:18px 12px 110px}.topbar{height:62px}.hero{padding:30px 24px;min-height:auto}.hero h1{font-size:42px}.hero-meta{display:block}.hero-meta span{display:block;margin-top:8px}.candidate-grid{grid-template-columns:1fr}.section-head{margin-top:30px}.legend{display:none}.stats-row{grid-template-columns:1fr}.admin-actions{flex-direction:column;align-items:stretch}.admin-actions .place-btn{width:100%}.record{grid-template-columns:1fr}.page-title h1{font-size:36px}.identity-fields,.subject-grid{grid-template-columns:1fr 1fr}.admin-card-title{align-items:flex-start;gap:8px}.attempt-title{align-items:flex-start;gap:8px}}
 </style>
@@ -234,7 +235,17 @@ async function enterAdmin(){
   }catch(error){adminToken="";sessionStorage.removeItem("vet-admin-token");qs("#loginMessage").textContent="登入已失效，請重新登入"}
 }
 function renderSharedBets(rows){
-  qs("#sharedBetList").innerHTML=rows.length?rows.map(b=>`<article class="record"><div><b>${escapeHtml(b.bettor_name)}</b><small>${new Date(b.created_at).toLocaleString("zh-TW")}・${b.bet_type==="parlay"?"串關":"各別單關"}</small></div><div class="selections">${b.selections.map(s=>`${escapeHtml(s.name)} ${s.outcome==="pass"?"通過":"未通過"} @ ${s.odd}`).join(" ＋ ")}</div><div><small>下注 ${Number(b.stake).toLocaleString()}</small><b>可能派彩 ${Math.round(b.payout).toLocaleString()}</b></div><span>${b.status}</span></article>`).join(""):`<div class="notice">目前還沒有任何下注。</div>`;
+  qs("#sharedBetList").innerHTML=rows.length?rows.map(b=>`<article class="record"><div><b>${escapeHtml(b.player_code||b.bettor_name)}</b><small>${new Date(b.created_at).toLocaleString("zh-TW")}・${b.bet_type==="parlay"?"串關":"各別單關"}</small></div><div class="selections">${b.selections.map(s=>`${escapeHtml(s.name)} ${s.outcome==="pass"?"通過":"未通過"} @ ${s.odd}${s.stake?`（${s.stake}）`:""}`).join(" ＋ ")}</div><div><small>下注 ${Number(b.stake).toLocaleString()}</small><b>可能派彩 ${Math.round(b.payout).toLocaleString()}</b></div><button class="delete-shared-bet" data-id="${b.id}">刪除</button></article>`).join(""):`<div class="notice">目前還沒有任何下注。</div>`;
+  qsa(".delete-shared-bet").forEach(button=>button.onclick=deleteSharedBet);
+}
+async function deleteSharedBet(e){
+  const id=e.target.dataset.id,bet=sharedBets.find(b=>b.id===id);
+  if(!confirm(`確定刪除 ${bet?.player_code||bet?.bettor_name||""} 的這筆投注？此操作無法復原。`))return;
+  try{
+    await sbRequest(`/rest/v1/bets?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",token:adminToken});
+    sharedBets=sharedBets.filter(b=>b.id!==id);
+    renderSharedBets(sharedBets);renderSettlement();toast("投注紀錄已刪除");
+  }catch(error){console.error(error);toast("刪除失敗，請重新登入")}
 }
 function settledReturn(bet){
   if(!Object.keys(examResults).length)return null;
