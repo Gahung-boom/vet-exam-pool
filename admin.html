@@ -16,6 +16,7 @@
 .admin-login{min-height:70vh;display:grid;place-items:center}.login-card{width:min(440px,100%);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px;box-shadow:0 18px 50px #15201612}.login-card h1{margin:8px 0}.login-card p{color:var(--muted);font-size:13px;line-height:1.6}.login-card label{display:block;font-size:12px;color:var(--muted);margin-top:14px}.login-card input{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;margin-top:5px}.login-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}.login-message{color:#b54820!important}.compact-title{padding-bottom:8px}
 .player-gate{position:fixed;inset:0;background:rgba(17,22,17,.92);backdrop-filter:blur(10px);z-index:100;display:grid;place-items:center;padding:20px}.player-gate.hidden{display:none}.player-gate .place-btn{margin-top:18px}.player-chip{border:0;cursor:pointer}.single-stake{width:78px!important;padding:6px!important;margin:0!important}.pick.single-mode{flex-wrap:wrap}.pick.single-mode .single-stake-wrap{width:100%;display:flex;justify-content:flex-end;align-items:center;gap:7px;font-size:10px;color:var(--muted)}.settlement-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0 20px}.result-option{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px}.result-option b{display:block;margin-bottom:9px}.result-option select{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px}.player-summary{display:grid;grid-template-columns:1.2fr repeat(4,1fr);gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);padding:14px;border-radius:11px;margin-bottom:8px}.player-summary small{display:block;color:var(--muted)}
 .delete-shared-bet{border:1px solid #e3b8a8;background:#fff5f1;color:#b54820;padding:7px 10px;border-radius:7px;cursor:pointer}
+.return-row{display:grid;grid-template-columns:auto 1fr 1fr;gap:12px;align-items:end}.return-row span:nth-child(n+2){text-align:right}.return-row strong{font-size:20px}
 @media(max-width:900px){.pool-chip{display:none}.candidate-grid{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1fr}.hero-art{display:none}.admin-grid{grid-template-columns:1fr}.record{grid-template-columns:1fr 1fr}.bet-slip{width:calc(100% - 24px);right:12px}.topbar{padding:0 12px}.brand>span:last-child{display:none}.nav-btn{padding:10px 9px;font-size:12px}}
 @media(max-width:560px){main{padding:18px 12px 110px}.topbar{height:62px}.hero{padding:30px 24px;min-height:auto}.hero h1{font-size:42px}.hero-meta{display:block}.hero-meta span{display:block;margin-top:8px}.candidate-grid{grid-template-columns:1fr}.section-head{margin-top:30px}.legend{display:none}.stats-row{grid-template-columns:1fr}.admin-actions{flex-direction:column;align-items:stretch}.admin-actions .place-btn{width:100%}.record{grid-template-columns:1fr}.page-title h1{font-size:36px}.identity-fields,.subject-grid{grid-template-columns:1fr 1fr}.admin-card-title{align-items:flex-start;gap:8px}.attempt-title{align-items:flex-start;gap:8px}}
 </style>
@@ -45,8 +46,8 @@
       <div class="page-title"><span class="kicker">PRIVATE DESK</span><h1>莊家設定</h1><p>這個頁面只提供給莊家；下注者請分享 index.html。</p></div>
       <div class="notice">
         <strong>及格規則：</strong>六科各 100 分，手動總分達 360 分通過。各科成績可留白，且不會自動加總。<br>
-        <strong>建議機率：</strong>50% ＋（最近總分－360）× 0.5 ＋ 平均進步分數 × 0.8
-        － 第 3 次起每多一次應試扣 5%。結果限制在 5%～90%；模型只採用手動總分。
+        <strong>建議機率：</strong>50% ＋（最近總分－360）× 0.5 ＋ 平均分數變化 × 0.3
+        － 第 3 次起每多一次應試扣 5%。分數進步會加分、倒退會扣分；結果限制在 5%～90%，模型只採用手動總分。
       </div>
       <div class="challenger-toolbar">
         <div><strong>挑戰者模組</strong><small>可自由新增、移除及重新命名</small></div>
@@ -117,7 +118,7 @@ function suggested(c){
   if(!totals.length)return 10;
   const changes=totals.slice(1).map((score,i)=>score-totals[i]);
   const trend=changes.length?changes.reduce((a,b)=>a+b,0)/changes.length:0;
-  return Math.round(Math.min(90,Math.max(5,50+(totals.at(-1)-360)*.5+trend*.8-Math.max(0,c.attempt-2)*5)));
+  return Math.round(Math.min(90,Math.max(5,50+(totals.at(-1)-360)*.5+trend*.3-Math.max(0,c.attempt-2)*5)));
 }
 function attemptEditor(exam,index){
   const subjects=exam.subjects||[];
