@@ -16,6 +16,7 @@
 .admin-login{min-height:70vh;display:grid;place-items:center}.login-card{width:min(440px,100%);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px;box-shadow:0 18px 50px #15201612}.login-card h1{margin:8px 0}.login-card p{color:var(--muted);font-size:13px;line-height:1.6}.login-card label{display:block;font-size:12px;color:var(--muted);margin-top:14px}.login-card input{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;margin-top:5px}.login-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}.login-message{color:#b54820!important}.compact-title{padding-bottom:8px}
 .player-gate{position:fixed;inset:0;background:rgba(17,22,17,.92);backdrop-filter:blur(10px);z-index:100;display:grid;place-items:center;padding:20px}.player-gate.hidden{display:none}.player-gate .place-btn{margin-top:18px}.player-chip{border:0;cursor:pointer}.single-stake{width:78px!important;padding:6px!important;margin:0!important}.pick.single-mode{flex-wrap:wrap}.pick.single-mode .single-stake-wrap{width:100%;display:flex;justify-content:flex-end;align-items:center;gap:7px;font-size:10px;color:var(--muted)}.settlement-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0 20px}.result-option{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px}.result-option b{display:block;margin-bottom:9px}.result-option select{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px}.player-summary{display:grid;grid-template-columns:1.2fr repeat(4,1fr);gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);padding:14px;border-radius:11px;margin-bottom:8px}.player-summary small{display:block;color:var(--muted)}
 .delete-shared-bet{border:1px solid #e3b8a8;background:#fff5f1;color:#b54820;padding:7px 10px;border-radius:7px;cursor:pointer}
+.return-row{display:grid;grid-template-columns:auto 1fr 1fr;gap:12px;align-items:end}.return-row span:nth-child(n+2){text-align:right}.return-row strong{font-size:20px}
 @media(max-width:900px){.pool-chip{display:none}.candidate-grid{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1fr}.hero-art{display:none}.admin-grid{grid-template-columns:1fr}.record{grid-template-columns:1fr 1fr}.bet-slip{width:calc(100% - 24px);right:12px}.topbar{padding:0 12px}.brand>span:last-child{display:none}.nav-btn{padding:10px 9px;font-size:12px}}
 @media(max-width:560px){main{padding:18px 12px 110px}.topbar{height:62px}.hero{padding:30px 24px;min-height:auto}.hero h1{font-size:42px}.hero-meta{display:block}.hero-meta span{display:block;margin-top:8px}.candidate-grid{grid-template-columns:1fr}.section-head{margin-top:30px}.legend{display:none}.stats-row{grid-template-columns:1fr}.admin-actions{flex-direction:column;align-items:stretch}.admin-actions .place-btn{width:100%}.record{grid-template-columns:1fr}.page-title h1{font-size:36px}.identity-fields,.subject-grid{grid-template-columns:1fr 1fr}.admin-card-title{align-items:flex-start;gap:8px}.attempt-title{align-items:flex-start;gap:8px}}
 </style>
@@ -85,7 +86,7 @@
               <div class="money-input"><span>$</span><input id="stake" type="number" min="10" step="10" value="100"></div>
             </label>
             <div class="quick-stakes"><button>50</button><button>100</button><button>200</button><button>500</button></div>
-            <div class="return-row"><span>總賠率 <b id="totalOdds">—</b></span><span>預估派彩 <strong id="payout">$0</strong></span></div>
+            <div class="return-row"><span>總賠率 <b id="totalOdds">—</b></span><span>總投注金額 <strong id="totalStake">$0</strong></span><span>預估派彩 <strong id="payout">$0</strong></span></div>
             <button id="placeBet" class="place-btn">確認送出模擬下注</button>
             <p class="fine-print">不含เงินจริง、金流或債務；結果與結算由莊家手動管理。</p>
           </div>
@@ -193,8 +194,10 @@ function calculate(){
   const stake=Math.max(0,Number(qs("#stake")?.value||0));
   const values=picks.map(p=>Number(odds(candidates.find(c=>c.id===p.id).prob,p.outcome)));
   const total=betType==="parlay"?values.reduce((a,b)=>a*b,1):0;
+  const totalStake=betType==="parlay"?stake:picks.reduce((sum,p)=>sum+Math.max(0,Number(singleStakes[p.id]||100)),0);
   const singlePayout=picks.reduce((sum,p,i)=>sum+Math.max(0,Number(singleStakes[p.id]||100))*values[i],0);
   qs("#totalOdds").textContent=picks.length?(betType==="parlay"?total.toFixed(2):"各別"):"—";
+  qs("#totalStake").textContent=money(totalStake);
   qs("#payout").textContent=money(betType==="parlay"?stake*total:singlePayout);
 }
 async function placeBet(){
