@@ -101,7 +101,7 @@ let candidates=normalizeCandidates(JSON.parse(localStorage.getItem("vet-candidat
 let margin=Number(localStorage.getItem("vet-margin")||8);
 let adminToken=sessionStorage.getItem("vet-admin-token")||"";
 let savedCandidateIds=[];
-const $=s=>document.querySelector(s), $=s=>[...document.querySelectorAll(s)];
+const qs=s=>document.querySelector(s), qsa=s=>[...document.querySelectorAll(s)];
 const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function suggested(c){
   const totals=c.attempts.map(a=>Number(a.total)).filter(Number.isFinite);
@@ -118,8 +118,8 @@ function attemptEditor(exam,index){
   </div>`;
 }
 function render(){
-  $("#margin").value=margin;$("#marginLabel").textContent=margin+"%";
-  $("#adminCards").innerHTML=candidates.map((c,i)=>`<div class="admin-card candidate-admin" data-id="${c.id}">
+  qs("#margin").value=margin;qs("#marginLabel").textContent=margin+"%";
+  qs("#adminCards").innerHTML=candidates.map((c,i)=>`<div class="admin-card candidate-admin" data-id="${c.id}">
     <div class="admin-card-title"><h3><span class="code-badge">${escapeHtml(c.code)}</span>${escapeHtml(c.name)}</h3><div><span>今年第 ${c.attempt} 次應試</span><button class="remove-candidate" type="button" title="移除挑戰者">移除</button></div></div>
     <div class="form-grid identity-fields">
       <label>挑戰者代號<input class="adm-code" maxlength="6" value="${escapeHtml(c.code)}" placeholder="例如 A"></label>
@@ -130,10 +130,10 @@ function render(){
     <div class="attempt-list">${c.attempts.length?c.attempts.map(attemptEditor).join(""):`<div class="no-history">今年是第 1 次應試，不需要輸入歷次成績。</div>`}</div>
     <div class="suggestion">模型建議通過率：<b>${suggested(c)}%</b><button class="use-suggestion" type="button">套用建議</button></div>
   </div>`).join("");
-  $(".exam-total").forEach(input=>input.oninput=updateSuggestion);
-  $(".adm-attempt").forEach(input=>input.onchange=syncAttempts);
-  $(".use-suggestion").forEach(button=>button.onclick=useSuggestion);
-  $(".remove-candidate").forEach(button=>button.onclick=removeCandidate);
+  qsa(".exam-total").forEach(input=>input.oninput=updateSuggestion);
+  qsa(".adm-attempt").forEach(input=>input.onchange=syncAttempts);
+  qsa(".use-suggestion").forEach(button=>button.onclick=useSuggestion);
+  qsa(".remove-candidate").forEach(button=>button.onclick=removeCandidate);
 }
 function readCard(card){
   const c=candidates.find(x=>x.id===card.dataset.id);
@@ -161,27 +161,27 @@ function useSuggestion(e){
   c.prob=suggested(c);card.querySelector(".adm-prob").value=c.prob;toast(`已套用 ${c.prob}%`);
 }
 function preserveEdits(){
-  $(".admin-card").forEach(readCard);
+  qsa(".admin-card").forEach(readCard);
 }
 function removeCandidate(e){
   const card=e.target.closest(".admin-card"),c=candidates.find(x=>x.id===card.dataset.id);
   if(!confirm(`確定移除「${c.name}」？既有下注紀錄不會刪除。`))return;
   preserveEdits();candidates=candidates.filter(x=>x.id!==card.dataset.id);render();toast("已移除挑戰者，請記得儲存");
 }
-$("#addCandidate").onclick=()=>{
+qs("#addCandidate").onclick=()=>{
   preserveEdits();
   const next=candidates.length+1;
   candidates.push({id:`candidate-${Date.now()}`,code:`C${next}`,name:`新挑戰者 ${next}`,attempt:2,attempts:[{total:0,subjects:[null,null,null,null,null,null]}],prob:20});
   render();toast("已新增挑戰者，請填寫資料");
 };
-function toast(msg){$("#toast").textContent=msg;$("#toast").classList.add("show");setTimeout(()=>$("#toast").classList.remove("show"),2200)}
-$("#margin").oninput=e=>$("#marginLabel").textContent=e.target.value+"%";
-$("#saveSettings").onclick=async()=>{
-  $(".admin-card").forEach(card=>{
+function toast(msg){qs("#toast").textContent=msg;qs("#toast").classList.add("show");setTimeout(()=>qs("#toast").classList.remove("show"),2200)}
+qs("#margin").oninput=e=>qs("#marginLabel").textContent=e.target.value+"%";
+qs("#saveSettings").onclick=async()=>{
+  qsa(".admin-card").forEach(card=>{
     const c=readCard(card),required=Math.max(0,c.attempt-1);
     while(c.attempts.length<required)c.attempts.push({total:0,subjects:[null,null,null,null,null,null]});
     c.attempts=c.attempts.slice(0,required);
-  });margin=Number($("#margin").value);
+  });margin=Number(qs("#margin").value);
   localStorage.setItem("vet-candidates",JSON.stringify(candidates));localStorage.setItem("vet-margin",margin);
   try{
     const currentIds=candidates.map(c=>c.id);
@@ -192,23 +192,23 @@ $("#saveSettings").onclick=async()=>{
     savedCandidateIds=[...currentIds];render();toast("盤口已同步給所有下注者");
   }catch(error){console.error(error);toast("同步失敗，請重新登入")}
 };
-$("#resetData").onclick=()=>{
+qs("#resetData").onclick=()=>{
   if(confirm("要恢復匿名示範資料與預設水位嗎？")){
     candidates=structuredClone(DEFAULTS);margin=8;localStorage.removeItem("vet-candidates");localStorage.removeItem("vet-margin");
     render();toast("已恢復示範資料");
   }
 };
 async function authenticate(mode){
-  const email=$("#adminEmail").value.trim(),password=$("#adminPassword").value;
-  if(!email||password.length<6)return $("#loginMessage").textContent="請輸入 Email 與至少 6 個字元的密碼";
-  $("#loginMessage").textContent="連線中…";
+  const email=qs("#adminEmail").value.trim(),password=qs("#adminPassword").value;
+  if(!email||password.length<6)return qs("#loginMessage").textContent="請輸入 Email 與至少 6 個字元的密碼";
+  qs("#loginMessage").textContent="連線中…";
   try{
     const path=mode==="signup"?"/auth/v1/signup":"/auth/v1/token?grant_type=password";
     const data=await sbRequest(path,{method:"POST",body:{email,password}});
     const token=data.access_token||data.session?.access_token;
     if(!token)throw new Error("請先到信箱完成驗證，再回來登入");
     adminToken=token;sessionStorage.setItem("vet-admin-token",token);await enterAdmin();
-  }catch(error){$("#loginMessage").textContent=error.message.includes("already")?"帳號已存在，請改按登入":error.message}
+  }catch(error){qs("#loginMessage").textContent=error.message.includes("already")?"帳號已存在，請改按登入":error.message}
 }
 async function enterAdmin(){
   try{
@@ -219,15 +219,15 @@ async function enterAdmin(){
     ]);
     candidates=remoteCandidates.map(c=>({id:c.id,code:c.code,name:c.name,attempt:c.attempt,attempts:c.attempts,prob:Number(c.probability)}));
     margin=Number(settings?.[0]?.margin??8);savedCandidateIds=candidates.map(c=>c.id);
-    $("#loginPanel").classList.add("hidden");$("#adminContent").classList.remove("hidden");
+    qs("#loginPanel").classList.add("hidden");qs("#adminContent").classList.remove("hidden");
     render();renderSharedBets(remoteBets);
-  }catch(error){adminToken="";sessionStorage.removeItem("vet-admin-token");$("#loginMessage").textContent="登入已失效，請重新登入"}
+  }catch(error){adminToken="";sessionStorage.removeItem("vet-admin-token");qs("#loginMessage").textContent="登入已失效，請重新登入"}
 }
 function renderSharedBets(rows){
-  $("#sharedBetList").innerHTML=rows.length?rows.map(b=>`<article class="record"><div><b>${escapeHtml(b.bettor_name)}</b><small>${new Date(b.created_at).toLocaleString("zh-TW")}・${b.bet_type==="parlay"?"串關":"各別單關"}</small></div><div class="selections">${b.selections.map(s=>`${escapeHtml(s.name)} ${s.outcome==="pass"?"通過":"未通過"} @ ${s.odd}`).join(" ＋ ")}</div><div><small>下注 ${Number(b.stake).toLocaleString()}</small><b>可能派彩 ${Math.round(b.payout).toLocaleString()}</b></div><span>${b.status}</span></article>`).join(""):`<div class="notice">目前還沒有任何下注。</div>`;
+  qs("#sharedBetList").innerHTML=rows.length?rows.map(b=>`<article class="record"><div><b>${escapeHtml(b.bettor_name)}</b><small>${new Date(b.created_at).toLocaleString("zh-TW")}・${b.bet_type==="parlay"?"串關":"各別單關"}</small></div><div class="selections">${b.selections.map(s=>`${escapeHtml(s.name)} ${s.outcome==="pass"?"通過":"未通過"} @ ${s.odd}`).join(" ＋ ")}</div><div><small>下注 ${Number(b.stake).toLocaleString()}</small><b>可能派彩 ${Math.round(b.payout).toLocaleString()}</b></div><span>${b.status}</span></article>`).join(""):`<div class="notice">目前還沒有任何下注。</div>`;
 }
-$("#loginAdmin").onclick=()=>authenticate("login");
-$("#signupAdmin").onclick=()=>authenticate("signup");
+qs("#loginAdmin").onclick=()=>authenticate("login");
+qs("#signupAdmin").onclick=()=>authenticate("signup");
 if(adminToken)enterAdmin();
 })();</script>
 </body>
