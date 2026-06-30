@@ -135,14 +135,14 @@ let candidates=normalizeCandidates(JSON.parse(localStorage.getItem("vet-candidat
 let margin=Number(localStorage.getItem("vet-margin")||8);
 let bets=JSON.parse(localStorage.getItem("vet-bets"))||[];
 let picks=[],betType="parlay";
-const $=s=>document.querySelector(s), $=s=>[...document.querySelectorAll(s)];
+const qs=s=>document.querySelector(s), qsa=s=>[...document.querySelectorAll(s)];
 const money=n=>"$"+Math.round(n).toLocaleString("zh-TW");
 function odds(prob,outcome){
   const p=outcome==="pass"?prob/100:1-prob/100;
   return Math.max(1.05,(1/p)*(1-margin/100)).toFixed(2);
 }
 function renderCandidates(){
-  $("#candidateGrid").innerHTML=candidates.map((c,i)=>`
+  qs("#candidateGrid").innerHTML=candidates.map((c,i)=>`
     <article class="candidate-card">
       <div class="card-top"><div class="avatar">${escapeHtml(c.code)}</div><span class="attempt">第 ${c.attempt} 次應試</span></div>
       <div class="card-content">
@@ -154,7 +154,7 @@ function renderCandidates(){
         </div>
       </div>
     </article>`).join("");
-  $(".odd-btn").forEach(b=>b.onclick=()=>togglePick(b.dataset.id,b.dataset.outcome));
+  qsa(".odd-btn").forEach(b=>b.onclick=()=>togglePick(b.dataset.id,b.dataset.outcome));
 }
 function isPicked(id,outcome){return picks.some(p=>p.id===id&&p.outcome===outcome)}
 function togglePick(id,outcome){
@@ -164,23 +164,23 @@ function togglePick(id,outcome){
   renderCandidates();renderSlip();
 }
 function renderSlip(){
-  $("#pickCount").textContent=picks.length;
-  $("#slipHint").textContent=picks.length?(picks.length>1?"可建立串關":"可建立單關"):"請選擇盤口";
-  $("#emptySlip").classList.toggle("hidden",!!picks.length);
-  $("#wagerArea").classList.toggle("hidden",!picks.length);
-  $("#picks").innerHTML=picks.map(p=>{const c=candidates.find(x=>x.id===p.id);return `<div class="pick"><span class="mini-avatar">${escapeHtml(c.code)}</span><span class="pick-text"><b>${escapeHtml(c.name)}</b>${p.outcome==="pass"?"順利通過":"未能通過"}</span><span class="pick-odd">${odds(c.prob,p.outcome)}</span><button class="remove-pick" data-id="${p.id}">×</button></div>`}).join("");
-  $(".remove-pick").forEach(b=>b.onclick=()=>{picks=picks.filter(p=>p.id!==b.dataset.id);renderCandidates();renderSlip()});
+  qs("#pickCount").textContent=picks.length;
+  qs("#slipHint").textContent=picks.length?(picks.length>1?"可建立串關":"可建立單關"):"請選擇盤口";
+  qs("#emptySlip").classList.toggle("hidden",!!picks.length);
+  qs("#wagerArea").classList.toggle("hidden",!picks.length);
+  qs("#picks").innerHTML=picks.map(p=>{const c=candidates.find(x=>x.id===p.id);return `<div class="pick"><span class="mini-avatar">${escapeHtml(c.code)}</span><span class="pick-text"><b>${escapeHtml(c.name)}</b>${p.outcome==="pass"?"順利通過":"未能通過"}</span><span class="pick-odd">${odds(c.prob,p.outcome)}</span><button class="remove-pick" data-id="${p.id}">×</button></div>`}).join("");
+  qsa(".remove-pick").forEach(b=>b.onclick=()=>{picks=picks.filter(p=>p.id!==b.dataset.id);renderCandidates();renderSlip()});
   calculate();
 }
 function calculate(){
-  const stake=Math.max(0,Number($("#stake")?.value||0));
+  const stake=Math.max(0,Number(qs("#stake")?.value||0));
   const values=picks.map(p=>Number(odds(candidates.find(c=>c.id===p.id).prob,p.outcome)));
   const total=betType==="parlay"?values.reduce((a,b)=>a*b,1):values.reduce((a,b)=>a+b,0);
-  $("#totalOdds").textContent=picks.length?(betType==="parlay"?total.toFixed(2):"各別"):"—";
-  $("#payout").textContent=money(stake*total);
+  qs("#totalOdds").textContent=picks.length?(betType==="parlay"?total.toFixed(2):"各別"):"—";
+  qs("#payout").textContent=money(stake*total);
 }
 async function placeBet(){
-  const name=$("#bettorName").value.trim(), stake=Number($("#stake").value);
+  const name=qs("#bettorName").value.trim(), stake=Number(qs("#stake").value);
   if(!name)return toast("請先填寫下注人暱稱");
   if(stake<10)return toast("模擬下注額至少 10 點");
   const selections=picks.map(p=>{const c=candidates.find(x=>x.id===p.id);return {name:c.name,outcome:p.outcome,odd:Number(odds(c.prob,p.outcome))}});
@@ -193,11 +193,11 @@ async function placeBet(){
   localStorage.setItem("vet-bets",JSON.stringify(bets));picks=[];renderCandidates();renderSlip();renderRecords();updatePool();toast("下注已記錄，祝你好眼光！");
 }
 function renderRecords(){
-  $("#recordCount").textContent=bets.length;
-  $("#recordStake").textContent=money(bets.reduce((a,b)=>a+b.stake,0));
-  $("#recordMax").textContent=money(Math.max(0,...bets.map(b=>b.payout)));
-  $("#recordList").innerHTML=bets.length?bets.map(b=>`<article class="record"><div><b>${escapeHtml(b.name)}</b><small>${b.date}・${b.type==="parlay"?"串關":"各別單關"}</small></div><div class="selections">${b.selections.map(s=>`${escapeHtml(s.name)} ${s.outcome==="pass"?"通過":"未通過"} @ ${s.odd}`).join(" ＋ ")}</div><div><small>下注 ${money(b.stake)}</small><b>可能派彩 ${money(b.payout)}</b></div><button class="delete-record" data-id="${b.id}" title="刪除">✕</button></article>`).join(""):`<div class="notice">還沒有紀錄。去本期盤口挑一注吧。</div>`;
-  $(".delete-record").forEach(x=>x.onclick=()=>{if(confirm("刪除這筆模擬下注？")){bets=bets.filter(b=>b.id!=x.dataset.id);localStorage.setItem("vet-bets",JSON.stringify(bets));renderRecords();updatePool()}});
+  qs("#recordCount").textContent=bets.length;
+  qs("#recordStake").textContent=money(bets.reduce((a,b)=>a+b.stake,0));
+  qs("#recordMax").textContent=money(Math.max(0,...bets.map(b=>b.payout)));
+  qs("#recordList").innerHTML=bets.length?bets.map(b=>`<article class="record"><div><b>${escapeHtml(b.name)}</b><small>${b.date}・${b.type==="parlay"?"串關":"各別單關"}</small></div><div class="selections">${b.selections.map(s=>`${escapeHtml(s.name)} ${s.outcome==="pass"?"通過":"未通過"} @ ${s.odd}`).join(" ＋ ")}</div><div><small>下注 ${money(b.stake)}</small><b>可能派彩 ${money(b.payout)}</b></div><button class="delete-record" data-id="${b.id}" title="刪除">✕</button></article>`).join(""):`<div class="notice">還沒有紀錄。去本期盤口挑一注吧。</div>`;
+  qsa(".delete-record").forEach(x=>x.onclick=()=>{if(confirm("刪除這筆模擬下注？")){bets=bets.filter(b=>b.id!=x.dataset.id);localStorage.setItem("vet-bets",JSON.stringify(bets));renderRecords();updatePool()}});
 }
 function suggested(c){
   const totals=c.attempts.map(a=>Number(a.total));
@@ -207,29 +207,29 @@ function suggested(c){
   return Math.round(Math.min(90,Math.max(5,50+(totals.at(-1)-360)*.5+trend*.8-Math.max(0,c.attempt-2)*5)));
 }
 function renderAdmin(){
-  if(!$("#adminCards"))return;
-  $("#margin").value=margin;$("#marginLabel").textContent=margin+"%";
-  $("#adminCards").innerHTML=candidates.map((c,i)=>`<div class="admin-card" data-id="${c.id}"><h3>${String.fromCharCode(65+i)}・${escapeHtml(c.name)}</h3><div class="form-grid"><label>顯示名稱<input class="adm-name" value="${escapeAttr(c.name)}"></label><label>第幾次應試<input class="adm-attempt" type="number" min="1" max="9" value="${c.attempt}"></label><label>歷次成績（逗號分隔）<input class="adm-scores" value="${c.scores.join(", ")}"></label><label>莊家通過率 %<input class="adm-prob" type="number" min="5" max="95" value="${c.prob}"></label></div><div class="suggestion">依目前資料，簡易模型建議：<b>${suggested(c)}%</b> 通過率</div></div>`).join("");
+  if(!qs("#adminCards"))return;
+  qs("#margin").value=margin;qs("#marginLabel").textContent=margin+"%";
+  qs("#adminCards").innerHTML=candidates.map((c,i)=>`<div class="admin-card" data-id="${c.id}"><h3>${String.fromCharCode(65+i)}・${escapeHtml(c.name)}</h3><div class="form-grid"><label>顯示名稱<input class="adm-name" value="${escapeAttr(c.name)}"></label><label>第幾次應試<input class="adm-attempt" type="number" min="1" max="9" value="${c.attempt}"></label><label>歷次成績（逗號分隔）<input class="adm-scores" value="${c.scores.join(", ")}"></label><label>莊家通過率 %<input class="adm-prob" type="number" min="5" max="95" value="${c.prob}"></label></div><div class="suggestion">依目前資料，簡易模型建議：<b>${suggested(c)}%</b> 通過率</div></div>`).join("");
 }
 function saveSettings(){
-  $(".admin-card").forEach(card=>{const c=candidates.find(x=>x.id===card.dataset.id);c.name=card.querySelector(".adm-name").value.trim()||c.name;c.attempt=Number(card.querySelector(".adm-attempt").value);c.scores=card.querySelector(".adm-scores").value.split(/[,，\s]+/).map(Number).filter(x=>x>=0&&x<=100);c.prob=Math.min(95,Math.max(5,Number(card.querySelector(".adm-prob").value)))});
-  margin=Number($("#margin").value);localStorage.setItem("vet-candidates",JSON.stringify(candidates));localStorage.setItem("vet-margin",margin);picks=[];renderAll();toast("盤口已更新");
+  qsa(".admin-card").forEach(card=>{const c=candidates.find(x=>x.id===card.dataset.id);c.name=card.querySelector(".adm-name").value.trim()||c.name;c.attempt=Number(card.querySelector(".adm-attempt").value);c.scores=card.querySelector(".adm-scores").value.split(/[,，\s]+/).map(Number).filter(x=>x>=0&&x<=100);c.prob=Math.min(95,Math.max(5,Number(card.querySelector(".adm-prob").value)))});
+  margin=Number(qs("#margin").value);localStorage.setItem("vet-candidates",JSON.stringify(candidates));localStorage.setItem("vet-margin",margin);picks=[];renderAll();toast("盤口已更新");
 }
-function updatePool(){$("#poolTotal").textContent=money(bets.reduce((a,b)=>a+b.stake,0))}
+function updatePool(){qs("#poolTotal").textContent=money(bets.reduce((a,b)=>a+b.stake,0))}
 function renderAll(){renderCandidates();renderSlip();renderRecords();renderAdmin();updatePool()}
-function toast(msg){$("#toast").textContent=msg;$("#toast").classList.add("show");setTimeout(()=>$("#toast").classList.remove("show"),2200)}
+function toast(msg){qs("#toast").textContent=msg;qs("#toast").classList.add("show");setTimeout(()=>qs("#toast").classList.remove("show"),2200)}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function escapeAttr(s){return escapeHtml(s)}
-$(".nav-btn").forEach(btn=>btn.onclick=()=>{$(".nav-btn").forEach(x=>x.classList.toggle("active",x===btn));$(".view").forEach(v=>v.classList.add("hidden"));$("#"+btn.dataset.view+"View").classList.remove("hidden");$("#betSlip").classList.toggle("hidden",btn.dataset.view!=="market")});
-$("#stake").oninput=calculate;
-$(".quick-stakes button").forEach(b=>b.onclick=()=>{$("#stake").value=b.textContent;calculate()});
-$(".bet-type button").forEach(b=>b.onclick=()=>{betType=b.dataset.type;$(".bet-type button").forEach(x=>x.classList.toggle("active",x===b));calculate()});
-$("#placeBet").onclick=placeBet;
-$("#slipToggle").onclick=()=>$("#betSlip").classList.toggle("collapsed");
-if($("#margin"))$("#margin").oninput=e=>$("#marginLabel").textContent=e.target.value+"%";
-if($("#saveSettings"))$("#saveSettings").onclick=saveSettings;
-if($("#resetData"))$("#resetData").onclick=()=>{if(confirm("要恢復匿名示範資料與預設水位嗎？")){candidates=structuredClone(DEFAULTS);margin=8;localStorage.removeItem("vet-candidates");localStorage.removeItem("vet-margin");picks=[];renderAll();toast("已恢復示範資料")}};
-const close=new Date();close.setDate(close.getDate()+14);$("#closeDate").textContent=close.toLocaleDateString("zh-TW",{month:"long",day:"numeric"});
+qsa(".nav-btn").forEach(btn=>btn.onclick=()=>{qsa(".nav-btn").forEach(x=>x.classList.toggle("active",x===btn));qsa(".view").forEach(v=>v.classList.add("hidden"));qs("#"+btn.dataset.view+"View").classList.remove("hidden");qs("#betSlip").classList.toggle("hidden",btn.dataset.view!=="market")});
+qs("#stake").oninput=calculate;
+qsa(".quick-stakes button").forEach(b=>b.onclick=()=>{qs("#stake").value=b.textContent;calculate()});
+qsa(".bet-type button").forEach(b=>b.onclick=()=>{betType=b.dataset.type;qsa(".bet-type button").forEach(x=>x.classList.toggle("active",x===b));calculate()});
+qs("#placeBet").onclick=placeBet;
+qs("#slipToggle").onclick=()=>qs("#betSlip").classList.toggle("collapsed");
+if(qs("#margin"))qs("#margin").oninput=e=>qs("#marginLabel").textContent=e.target.value+"%";
+if(qs("#saveSettings"))qs("#saveSettings").onclick=saveSettings;
+if(qs("#resetData"))qs("#resetData").onclick=()=>{if(confirm("要恢復匿名示範資料與預設水位嗎？")){candidates=structuredClone(DEFAULTS);margin=8;localStorage.removeItem("vet-candidates");localStorage.removeItem("vet-margin");picks=[];renderAll();toast("已恢復示範資料")}};
+const close=new Date();close.setDate(close.getDate()+14);qs("#closeDate").textContent=close.toLocaleDateString("zh-TW",{month:"long",day:"numeric"});
 renderAll();
 async function loadSharedMarket(){
   try{
