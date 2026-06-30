@@ -83,7 +83,7 @@ async function sbRequest(path,{method="GET",body,token,headers={}}={}){
   return text?JSON.parse(text):null;
 }
 </script>
-  <script>const SUBJECTS=["獸醫藥理學","獸醫病理學","獸醫公共衛生學","獸醫普通病學","獸醫傳染病學","獸醫實驗診斷學"];
+  <script>(()=>{const SUBJECTS=["獸醫藥理學","獸醫病理學","獸醫公共衛生學","獸醫普通病學","獸醫傳染病學","獸醫實驗診斷學"];
 const DEFAULTS=[
   {id:"a",code:"A",name:"挑戰者 A",attempt:2,attempts:[{total:330,subjects:[56,54,61,52,55,52]}],prob:35},
   {id:"b",code:"B",name:"挑戰者 B",attempt:3,attempts:[{total:282,subjects:[47,49,52,46,43,45]},{total:340,subjects:[58,56,61,55,54,56]}],prob:35},
@@ -229,6 +229,6 @@ function renderSharedBets(rows){
 $("#loginAdmin").onclick=()=>authenticate("login");
 $("#signupAdmin").onclick=()=>authenticate("signup");
 if(adminToken)enterAdmin();
-</script>
+})();</script>
 </body>
 </html>
