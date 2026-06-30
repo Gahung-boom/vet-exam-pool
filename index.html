@@ -11,6 +11,7 @@
 .admin-preview-link{text-decoration:none;color:var(--ink);font-size:12px}.admin-note{margin-top:18px;background:#eeeae0;border-left-color:#8d918a}
 .candidate-admin{grid-column:1/-1}.admin-card-title{display:flex;justify-content:space-between;align-items:center}.admin-card-title span{font-size:12px;color:var(--muted)}.identity-fields{grid-template-columns:2fr 1fr 1fr;margin-bottom:16px}.attempt-list{display:grid;gap:12px}.exam-attempt{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}.attempt-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}.manual-total{display:flex!important;align-items:center;gap:8px;font-weight:800;color:var(--green)!important}.manual-total input{width:100px!important;margin:0!important}.subject-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.subject-grid label{font-size:11px;color:var(--muted)}.subject-grid input{margin-top:4px}.use-suggestion{float:right;border:1px solid var(--green);background:white;color:var(--green);border-radius:7px;padding:5px 9px;cursor:pointer}
 .challenger-toolbar{display:flex;justify-content:space-between;align-items:center;margin:4px 0 14px}.challenger-toolbar small{display:block;color:var(--muted);margin-top:4px}.add-candidate{width:auto;padding:11px 17px}.code-badge{display:inline-grid;place-items:center;min-width:32px;height:32px;padding:0 8px;background:var(--green);color:var(--lime)!important;border-radius:9px;margin-right:9px}.admin-card-title>div{display:flex;align-items:center;gap:12px}.remove-candidate{border:1px solid #e3b8a8;background:#fff5f1;color:#b54820;padding:6px 9px;border-radius:7px;cursor:pointer}.identity-fields{grid-template-columns:1fr 2fr 1fr 1fr}
+.candidate-speech{margin:10px 0 2px;padding:9px 11px;border-left:3px solid var(--lime);background:#f0f3e8;color:var(--green);font-size:12px;font-weight:700;border-radius:0 8px 8px 0}.speech-field{grid-column:1/-1}.speech-field textarea{display:block;width:100%;min-height:66px;resize:vertical;padding:9px;border:1px solid var(--line);border-radius:8px;margin-top:5px;font:inherit}
 .no-history{padding:18px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);text-align:center;font-size:13px;background:#f7f6f0}
 .admin-login{min-height:70vh;display:grid;place-items:center}.login-card{width:min(440px,100%);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px;box-shadow:0 18px 50px #15201612}.login-card h1{margin:8px 0}.login-card p{color:var(--muted);font-size:13px;line-height:1.6}.login-card label{display:block;font-size:12px;color:var(--muted);margin-top:14px}.login-card input{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;margin-top:5px}.login-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}.login-message{color:#b54820!important}.compact-title{padding-bottom:8px}
 @media(max-width:900px){.pool-chip{display:none}.candidate-grid{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1fr}.hero-art{display:none}.admin-grid{grid-template-columns:1fr}.record{grid-template-columns:1fr 1fr}.bet-slip{width:calc(100% - 24px);right:12px}.topbar{padding:0 12px}.brand>span:last-child{display:none}.nav-btn{padding:10px 9px;font-size:12px}}
@@ -49,7 +50,7 @@
       </div>
 
       <div class="section-head">
-        <div><span class="kicker">THE CANDIDATES</span><h2>四位挑戰者</h2></div>
+        <div><span class="kicker">THE CANDIDATES</span><h2 id="candidateTitle">挑戰者</h2></div>
         <div class="legend"><span><i class="swatch pass"></i>通過</span><span><i class="swatch fail"></i>未通過</span></div>
       </div>
       <div id="candidateGrid" class="candidate-grid"></div>
@@ -118,10 +119,10 @@ async function sbRequest(path,{method="GET",body,token,headers={}}={}){
 </script>
   <script>(()=>{const SUBJECTS=["獸醫藥理學","獸醫病理學","獸醫公共衛生學","獸醫普通病學","獸醫傳染病學","獸醫實驗診斷學"];
 const DEFAULTS = [
-  {id:"a",code:"A",name:"挑戰者 A",attempt:2,attempts:[{total:330,subjects:[56,54,61,52,55,52]}],prob:35},
-  {id:"b",code:"B",name:"挑戰者 B",attempt:3,attempts:[{total:282,subjects:[47,49,52,46,43,45]},{total:340,subjects:[58,56,61,55,54,56]}],prob:35},
-  {id:"c",code:"C",name:"挑戰者 C",attempt:3,attempts:[{total:306,subjects:[52,50,55,48,51,50]},{total:336,subjects:[56,58,59,54,55,54]}],prob:31},
-  {id:"d",code:"D",name:"挑戰者 D",attempt:3,attempts:[{total:268,subjects:[43,46,48,42,45,44]},{total:294,subjects:[49,50,53,47,48,47]}],prob:12}
+  {id:"a",code:"A",name:"挑戰者 A",speech:"這次一定上岸！",attempt:2,attempts:[{total:330,subjects:[56,54,61,52,55,52]}],prob:35},
+  {id:"b",code:"B",name:"挑戰者 B",speech:"把不會的都變成會的。",attempt:3,attempts:[{total:282,subjects:[47,49,52,46,43,45]},{total:340,subjects:[58,56,61,55,54,56]}],prob:35},
+  {id:"c",code:"C",name:"挑戰者 C",speech:"穩住六科，白袍見。",attempt:3,attempts:[{total:306,subjects:[52,50,55,48,51,50]},{total:336,subjects:[56,58,59,54,55,54]}],prob:31},
+  {id:"d",code:"D",name:"挑戰者 D",speech:"不到最後一題不放棄。",attempt:3,attempts:[{total:268,subjects:[43,46,48,42,45,44]},{total:294,subjects:[49,50,53,47,48,47]}],prob:12}
 ];
 function normalizeCandidates(data){
   return data.map((c,i)=>{
@@ -147,6 +148,7 @@ function renderCandidates(){
       <div class="card-top"><div class="avatar">${escapeHtml(c.code)}</div><span class="attempt">第 ${c.attempt} 次應試</span></div>
       <div class="card-content">
         <div class="candidate-name"><h3>${escapeHtml(c.name)}</h3></div>
+        ${c.speech?`<blockquote class="candidate-speech">「${escapeHtml(c.speech)}」</blockquote>`:""}
         <div class="history">歷次總分　<strong>${c.attempts.map((exam,i)=>`第 ${i+1} 次 ${exam.total} 分`).join(" → ")||"尚未填寫"}</strong></div>
         <div class="odds-row">
           <button class="odd-btn ${isPicked(c.id,"pass")?"selected":""}" data-id="${c.id}" data-outcome="pass"><span>順利通過</span><b>${odds(c.prob,"pass")}</b></button>
@@ -154,6 +156,7 @@ function renderCandidates(){
         </div>
       </div>
     </article>`).join("");
+  qs("#candidateTitle").textContent=`${candidates.length} 位挑戰者`;
   qsa(".odd-btn").forEach(b=>b.onclick=()=>togglePick(b.dataset.id,b.dataset.outcome));
 }
 function isPicked(id,outcome){return picks.some(p=>p.id===id&&p.outcome===outcome)}
@@ -237,7 +240,7 @@ async function loadSharedMarket(){
       sbRequest("/rest/v1/candidates?select=*&order=sort_order.asc"),
       sbRequest("/rest/v1/settings?id=eq.main&select=*")
     ]);
-    if(remoteCandidates?.length)candidates=remoteCandidates.map(c=>({id:c.id,code:c.code,name:c.name,attempt:c.attempt,attempts:c.attempts,prob:Number(c.probability)}));
+    if(remoteCandidates)candidates=remoteCandidates.map(c=>({id:c.id,code:c.code,name:c.name,speech:c.speech||"",attempt:c.attempt,attempts:c.attempts,prob:Number(c.probability)}));
     if(settings?.[0])margin=Number(settings[0].margin);
     picks=[];renderCandidates();renderSlip();
   }catch(error){console.error(error);toast("目前使用離線盤口")}
